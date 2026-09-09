@@ -122,7 +122,7 @@ export default function EntriesTable({
           type="date"
           className="border border-gray-300 rounded px-2 py-1 text-xs"
           value={date}
-          onChange={(e) => setDate(Date(e.target.valuenew).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric')}
+          onChange={(e) => setDate(e.target.valuenew}
         />
       </div>
 
@@ -145,7 +145,6 @@ export default function EntriesTable({
             <tbody>
               {filtered.map((e) => (
                 <tr key={e.id} className="border-b border-gray-50 hover:bg-gray-50">
-                  <td className="py-2 pr-2 whitespace-nowrap">{new Date(e.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
                   <td className="py-2 pr-2">{e.description || "—"}</td>
                   <td className="py-2 pr-2 whitespace-nowrap">
                     {e.category_icon} {e.category}
