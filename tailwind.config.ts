@@ -8,9 +8,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        harbor: "#5782BB",   // primary - headers, buttons
-        seafoam: "#64D7D6",  // accent - positive/teal highlights
-        cream: "#FFFEEC",    // background
+        harbor: "#9290C3",   // primary - headers, buttons
+        seafoam: "#76ABAE",  // accent - positive/teal highlights
+        cream: "#EEEEEE",    // background
         lilac: "#C4AFF0"     // secondary accent - highlights, badges
       },
       fontFamily: {
