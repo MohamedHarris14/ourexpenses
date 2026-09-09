@@ -149,7 +149,7 @@ export default function EntriesTable({
                   <td className="py-2 pr-2 whitespace-nowrap">{e.paid_by}</td>
                   <td className="py-2 pr-2 text-right whitespace-nowrap">{formatINR(e.amount)}</td>
                  <td className="py-2 text-right">
-                      {session?.role !== "primary" && (
+                      {session?.role === "primary" && (
                         <button
                           onClick={() => onDelete(e.id)}
                           className="text-xs text-red-500 hover:underline"
