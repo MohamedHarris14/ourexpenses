@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const rows = await query<{ id: number; amount: string; updated_at: string }>(
     "SELECT id, amount, updated_at FROM income ORDER BY id ASC LIMIT 1"

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   const id = Number(params.id);
   if (!Number.isInteger(id)) {
