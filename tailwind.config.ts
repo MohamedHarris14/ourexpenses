@@ -8,10 +8,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        harbor: "#9290C3",   // primary - headers, buttons
-        seafoam: "#76ABAE",  // accent - positive/teal highlights
+        harbor: "#30475E",   // primary - headers, buttons
+        seafoam: "#4D4C7D",  // accent - positive/teal highlights
         cream: "#EEEEEE",    // background
-        lilac: "#C4AFF0"     // secondary accent - highlights, badges
+        lilac: "#787A91"     // secondary accent - highlights, badges
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"]
