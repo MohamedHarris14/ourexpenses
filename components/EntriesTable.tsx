@@ -154,7 +154,7 @@ export default function EntriesTable({
                           onClick={() => onDelete(e.id)}
                           className="text-xs text-red-500 hover:underline"
                         >
-                          Delete
+                           {session?.role}
                         </button>
                       )}
                 </td>
