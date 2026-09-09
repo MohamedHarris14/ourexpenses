@@ -122,7 +122,7 @@ export default function EntriesTable({
           type="date"
           className="border border-gray-300 rounded px-2 py-1 text-xs"
           value={date}
-          onChange={(e) => setDate(e.target.value)}
+          onChange={(e) => setDate(Date(e.target.valuenew).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric')}
         />
       </div>
 
