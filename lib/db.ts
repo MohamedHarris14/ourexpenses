@@ -1,8 +1,23 @@
 import { Pool } from "pg";
 
 // Vercel Postgres / Neon expose the connection string as POSTGRES_URL.
-// Fall back to DATABASE_URL for other Postgres providers.
-const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+// Neon's Vercel integration sometimes prefixes it with your project name
+// (e.g. "myapp_DATABASE_URL") instead of the plain POSTGRES_URL/DATABASE_URL.
+// Check the plain names first, then fall back to scanning for any prefixed
+// variant so a prefix change in the dashboard doesn't silently break this.
+function resolveConnectionString() {
+  if (process.env.POSTGRES_URL) return process.env.POSTGRES_URL;
+  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
+
+  const prefixedKey = Object.keys(process.env).find((key) =>
+    /_(POSTGRES_URL|DATABASE_URL)$/i.test(key)
+  );
+  if (prefixedKey) return process.env[prefixedKey];
+
+  return undefined;
+}
+
+const connectionString = resolveConnectionString();
 
 if (!connectionString) {
   console.warn(
