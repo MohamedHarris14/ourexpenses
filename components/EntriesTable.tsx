@@ -133,7 +133,6 @@ export default function EntriesTable({
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs text-gray-400 border-b border-gray-100">
-                <th className="py-2 pr-2">Date</th>
                 <th className="py-2 pr-2">Description</th>
                 <th className="py-2 pr-2">Category</th>
                 <th className="py-2 pr-2">Payment</th>
