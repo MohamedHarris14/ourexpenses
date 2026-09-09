@@ -2,21 +2,23 @@
 
 import { useMemo, useState } from "react";
 import { formatINR, monthLabel } from "@/lib/format";
-import type { Category, Expense } from "@/lib/types";
-import type { Session } from "@/lib/types";
+import type { Category, Expense, Session } from "@/lib/types";
+
 
 export default function EntriesTable({
   expenses,
   categories,
   year,
   month,
-  onDelete
+  onDelete,
+  session
 }: {
   expenses: Expense[];
   categories: Category[];
   year: number;
   month: number;
   onDelete: (id: number) => void;
+  session: Session | null;
 }) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
@@ -146,21 +148,19 @@ export default function EntriesTable({
                   <td className="py-2 pr-2 whitespace-nowrap">{e.payment_method}</td>
                   <td className="py-2 pr-2 whitespace-nowrap">{e.paid_by}</td>
                   <td className="py-2 pr-2 text-right whitespace-nowrap">{formatINR(e.amount)}</td>
-                  <td className="py-2 text-right">
-                    { Session?.role !== "primary" ?
-                    <button
-                      onClick={() => onDelete(e.id)}
-                      className="text-xs text-red-500 hover:underline"
-                    >
-                      Delete
-                    </button>
-                     : 
-                     <button
-                      className="text-xs text-red-500 hover:underline"
-                    >
-                      Delete
-                    </button>
-                    }
+                 <td className="py-2 text-right">
+                      {session?.role !== "primary" ? (
+                        <button
+                          onClick={() => onDelete(e.id)}
+                          className="text-xs text-red-500 hover:underline"
+                        >
+                          Delete
+                        </button>
+                      ) : (
+                        <button className="text-xs text-red-500 hover:underline" disabled>
+                          Delete
+                        </button>
+                      )}
                   </td>
                 </tr>
               ))}
