@@ -116,6 +116,7 @@ export default function DashboardPage() {
               year={year}
               month={month}
               onDelete={handleDelete}
+              session={session}
             />
           </>
         )}
