@@ -5,6 +5,12 @@ import type { FixedExpense } from "@/lib/types";
 
 const SECTIONS: FixedExpense["section"][] = ["Needs", "Wants", "Other / Recurring"];
 
+const BAR_COLORS: Record<string, string> = {
+  Needs: "#5782BB", // harbor
+  Wants: "#64D7D6", // seafoam
+  "Other / Recurring": "#C4AFF0" // lilac
+};
+
 export default function BudgetSummary({ items }: { items: FixedExpense[] }) {
   const totals = SECTIONS.map((section) => {
     const sectionItems = items.filter((i) => i.section === section);
@@ -21,13 +27,24 @@ export default function BudgetSummary({ items }: { items: FixedExpense[] }) {
   return (
     <div className="card">
       <h2 className="font-semibold text-harbor mb-3">Monthly Budget Summary</h2>
-      <ul className="space-y-2 text-sm">
+      <ul className="space-y-3 text-sm">
         {totals.map((t) => (
-          <li key={t.section} className="flex justify-between">
-            <span>{t.section}</span>
-            <span>
-              {formatINR(t.budget)} ({t.pct}%)
-            </span>
+          <li key={t.section}>
+            <div className="flex justify-between mb-1">
+              <span>{t.section}</span>
+              <span>
+                {formatINR(t.budget)} ({t.pct}%)
+              </span>
+            </div>
+            <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: `${Math.min(t.pct, 100)}%`,
+                  backgroundColor: t.pct > 100 ? "#DC2626" : BAR_COLORS[t.section]
+                }}
+              />
+            </div>
           </li>
         ))}
       </ul>

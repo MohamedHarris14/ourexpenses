@@ -111,7 +111,7 @@ export default function SummaryCards({
       </div>
 
       <div className="card sm:col-span-3">
-        <p className="text-xs text-gray-500">Average Expense / Day</p>
+        <p className="text-xs text-gray-500">Expense / Day</p>
         <p className="text-2xl font-semibold mt-1">{formatINR(avgPerDay)}</p>
       </div>
     </div>

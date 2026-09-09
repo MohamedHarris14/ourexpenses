@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { formatINR } from "@/lib/format";
 import type { FixedExpense } from "@/lib/types";
 
@@ -17,28 +16,13 @@ export default function FixedExpenses({
   month: number;
   onChanged: () => void;
 }) {
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [draft, setDraft] = useState("");
-
-  async function patch(id: number, body: Record<string, unknown>) {
+  async function toggleChecked(id: number, checked: boolean) {
     await fetch(`/api/fixed-expenses/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ year, month, ...body })
+      body: JSON.stringify({ year, month, checked })
     });
     onChanged();
-  }
-
-  function startEditing(item: FixedExpense) {
-    setEditingId(item.id);
-    setDraft(String(item.actual_amount));
-  }
-
-  async function saveActualAmount(item: FixedExpense) {
-    const value = parseFloat(draft);
-    if (Number.isNaN(value) || value < 0) return;
-    await patch(item.id, { actualAmount: value, checked: value > 0 ? true : item.checked });
-    setEditingId(null);
   }
 
   return (
@@ -57,36 +41,23 @@ export default function FixedExpenses({
                     <input
                       type="checkbox"
                       checked={item.checked}
-                      onChange={(e) => patch(item.id, { checked: e.target.checked })}
+                      onChange={(e) => toggleChecked(item.id, e.target.checked)}
                       className="w-4 h-4 accent-harbor"
                     />
-                    <span className="text-sm flex-1">
+                    <span
+                      className={`text-sm flex-1 ${
+                        item.checked ? "line-through text-gray-400" : ""
+                      }`}
+                    >
                       {item.category_icon} {item.category}
                     </span>
-                    {editingId === item.id ? (
-                      <span className="flex items-center gap-1 text-xs">
-                        <input
-                          type="number"
-                          className="w-20 border border-gray-300 rounded px-1 py-0.5"
-                          value={draft}
-                          onChange={(e) => setDraft(e.target.value)}
-                          autoFocus
-                        />
-                        <button
-                          onClick={() => saveActualAmount(item)}
-                          className="text-harbor font-medium"
-                        >
-                          ✓
-                        </button>
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => startEditing(item)}
-                        className="text-xs text-gray-500 hover:text-harbor"
-                      >
-                        {formatINR(item.actual_amount)} / {formatINR(item.budget_amount)}
-                      </button>
-                    )}
+                    <span
+                      className={`text-xs ${
+                        item.checked ? "line-through text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      {formatINR(item.actual_amount)} / {formatINR(item.budget_amount)}
+                    </span>
                   </li>
                 ))}
               </ul>

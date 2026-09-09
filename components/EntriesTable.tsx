@@ -21,8 +21,7 @@ export default function EntriesTable({
   const [category, setCategory] = useState("all");
   const [paidBy, setPaidBy] = useState("all");
   const [paymentMethod, setPaymentMethod] = useState("all");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
+  const [date, setDate] = useState("");
 
   const paidByOptions = useMemo(
     () => Array.from(new Set(expenses.map((e) => e.paid_by))),
@@ -38,8 +37,7 @@ export default function EntriesTable({
     if (category !== "all" && e.category !== category) return false;
     if (paidBy !== "all" && e.paid_by !== paidBy) return false;
     if (paymentMethod !== "all" && e.payment_method !== paymentMethod) return false;
-    if (dateFrom && e.date < dateFrom) return false;
-    if (dateTo && e.date > dateTo) return false;
+    if (date && e.date !== date) return false;
     return true;
   });
 
@@ -123,14 +121,8 @@ export default function EntriesTable({
         <input
           type="date"
           className="border border-gray-300 rounded px-2 py-1 text-xs"
-          value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
-        />
-        <input
-          type="date"
-          className="border border-gray-300 rounded px-2 py-1 text-xs"
-          value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
         />
       </div>
 
