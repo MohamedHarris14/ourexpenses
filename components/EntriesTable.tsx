@@ -122,7 +122,7 @@ export default function EntriesTable({
           type="date"
           className="border border-gray-300 rounded px-2 py-1 text-xs"
           value={date}
-          onChange={(e) => setDate(e.target.valuenew}
+          onChange={(e) => setDate(e.target.value)}
         />
       </div>
 
