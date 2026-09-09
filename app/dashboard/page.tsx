@@ -33,7 +33,7 @@ export default function DashboardPage() {
         fetch("/api/categories"),
         fetch(`/api/expenses?month=${monthParam}`),
         fetch(`/api/fixed-expenses?year=${year}&month=${month}`),
-        fetch("/api/income")
+        fetch(`/api/income?year=${year}&month=${month}`)
       ]);
 
       if (sessionRes.ok) setSession(await sessionRes.json());
@@ -85,6 +85,8 @@ export default function DashboardPage() {
       <div className="max-w-5xl mx-auto px-4 mt-6 space-y-6">
         <SummaryCards
           session={session}
+          year={year}
+          month={month}
           income={income}
           totalSpent={totalSpent}
           daysElapsed={daysElapsed}

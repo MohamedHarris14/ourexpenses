@@ -28,8 +28,11 @@ CREATE TABLE IF NOT EXISTS fixed_expense_status (
 
 CREATE TABLE IF NOT EXISTS income (
   id SERIAL PRIMARY KEY,
+  year INT NOT NULL,
+  month INT NOT NULL, -- 1-12
   amount NUMERIC(12, 2) NOT NULL DEFAULT 0,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (year, month)
 );
 
 CREATE TABLE IF NOT EXISTS expenses (
@@ -86,7 +89,10 @@ FROM (VALUES
 JOIN categories c ON c.name = v.category_name
 ON CONFLICT DO NOTHING;
 
--- Seed a starting income row (edit the amount from the app afterwards)
-INSERT INTO income (amount)
-SELECT 0
-WHERE NOT EXISTS (SELECT 1 FROM income);
+-- Seed a starting income row for the current month (edit the amount from the app afterwards)
+INSERT INTO income (year, month, amount)
+SELECT EXTRACT(YEAR FROM NOW())::INT, EXTRACT(MONTH FROM NOW())::INT, 0
+WHERE NOT EXISTS (
+  SELECT 1 FROM income
+  WHERE year = EXTRACT(YEAR FROM NOW())::INT AND month = EXTRACT(MONTH FROM NOW())::INT
+);

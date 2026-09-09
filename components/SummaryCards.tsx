@@ -6,12 +6,16 @@ import type { Session } from "@/lib/types";
 
 export default function SummaryCards({
   session,
+  year,
+  month,
   income,
   totalSpent,
   daysElapsed,
   onIncomeUpdated
 }: {
   session: Session | null;
+  year: number;
+  month: number;
   income: number;
   totalSpent: number;
   daysElapsed: number;
@@ -32,7 +36,7 @@ export default function SummaryCards({
       const res = await fetch("/api/income", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: value })
+        body: JSON.stringify({ year, month, amount: value })
       });
       if (res.ok) {
         onIncomeUpdated(value);
