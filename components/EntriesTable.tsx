@@ -118,12 +118,6 @@ export default function EntriesTable({
             </option>
           ))}
         </select>
-        <input
-          type="date"
-          className="border border-gray-300 rounded px-2 py-1 text-xs"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
       </div>
 
       {filtered.length === 0 ? (
