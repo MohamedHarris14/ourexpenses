@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import { NextRequest } from "next/server";
 
 export const SESSION_COOKIE = "oe_session";
@@ -20,40 +19,68 @@ function getSecret() {
   return secret;
 }
 
-function base64url(input: Buffer | string) {
-  return Buffer.from(input)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+function toBase64Url(bytes: ArrayBuffer | Uint8Array) {
+  const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  let binary = "";
+  for (let i = 0; i < arr.length; i++) binary += String.fromCharCode(arr[i]);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-function sign(data: string) {
-  return base64url(crypto.createHmac("sha256", getSecret()).update(data).digest());
+function fromBase64Url(input: string) {
+  const padded = input.replace(/-/g, "+").replace(/_/g, "/");
+  const binary = atob(padded);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
 }
 
-export function createSessionToken(payload: Omit<SessionPayload, "exp">) {
+async function getHmacKey() {
+  const encoder = new TextEncoder();
+  return crypto.subtle.importKey(
+    "raw",
+    encoder.encode(getSecret()),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign", "verify"]
+  );
+}
+
+async function sign(data: string) {
+  const key = await getHmacKey();
+  const encoder = new TextEncoder();
+  const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(data));
+  return toBase64Url(signature);
+}
+
+export async function createSessionToken(payload: Omit<SessionPayload, "exp">) {
   const full: SessionPayload = {
     ...payload,
     exp: Math.floor(Date.now() / 1000) + SESSION_MAX_AGE_SECONDS
   };
-  const body = base64url(JSON.stringify(full));
-  const signature = sign(body);
+  const body = toBase64Url(new TextEncoder().encode(JSON.stringify(full)));
+  const signature = await sign(body);
   return `${body}.${signature}`;
 }
 
-export function verifySessionToken(token: string | undefined | null): SessionPayload | null {
+export async function verifySessionToken(
+  token: string | undefined | null
+): Promise<SessionPayload | null> {
   if (!token) return null;
   const [body, signature] = token.split(".");
   if (!body || !signature) return null;
-  const expected = sign(body);
-  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
-    return null;
+
+  const expected = await sign(body);
+  if (expected.length !== signature.length) return null;
+
+  // Constant-time-ish comparison
+  let mismatch = 0;
+  for (let i = 0; i < expected.length; i++) {
+    mismatch |= expected.charCodeAt(i) ^ signature.charCodeAt(i);
   }
+  if (mismatch !== 0) return null;
+
   try {
-    const payload: SessionPayload = JSON.parse(
-      Buffer.from(body.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString()
-    );
+    const payload: SessionPayload = JSON.parse(new TextDecoder().decode(fromBase64Url(body)));
     if (payload.exp < Math.floor(Date.now() / 1000)) return null;
     return payload;
   } catch {
@@ -61,7 +88,7 @@ export function verifySessionToken(token: string | undefined | null): SessionPay
   }
 }
 
-export function getSessionFromRequest(req: NextRequest): SessionPayload | null {
+export async function getSessionFromRequest(req: NextRequest): Promise<SessionPayload | null> {
   const token = req.cookies.get(SESSION_COOKIE)?.value;
   return verifySessionToken(token);
 }

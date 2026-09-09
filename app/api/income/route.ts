@@ -12,7 +12,7 @@ export async function GET() {
 }
 
 export async function PUT(req: NextRequest) {
-  const session = getSessionFromRequest(req);
+  const session = await getSessionFromRequest(req);
   if (session?.role !== "primary") {
     return NextResponse.json(
       { error: "Only the primary account can edit income" },
